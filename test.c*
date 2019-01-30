@@ -1,5 +1,5 @@
 void test(b,a){ print('hello world');
 	a
-a	{b} 
+a	{b} } {
 		c
 }

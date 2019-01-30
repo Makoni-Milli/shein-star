@@ -1,3 +1,4 @@
+# compile (c) for c*, copyright Takudzwa Makoni
 import linecache
 
 # will check if the string has a function/variable type
@@ -55,7 +56,7 @@ def B005(code):
     f.write(code)
     f.close()
 
-def C002(filename,a,b):
+def C002(filename,a,b,pf,pb):
     p = (a[0]<b[0]) and (a[1]<b[1])
     q = (a[0]<b[0]) and (a[1]==b[1])
     r = (a[0]==b[0]) and (a[1]<b[1])
@@ -65,12 +66,12 @@ def C002(filename,a,b):
         for i in range(b[0]):
             pos+=' '
         pos+='^'
-        print('syntax error: bracket "{ or }" mismatch on line',b[1])
-        exit()
+        #print('syntax error: bracket "{ or }" mismatch on line',b[1])
+
     sl = []
     #print(a[0],b[0],'C002 1')
-    count = a[1]
-    while count <= b[1] + 1:
+    count = a[1] 
+    while count <= b[1] + 2: 
         line = linecache.getline(filename,count)
         linecache.clearcache()
         line = line.replace('\n','')
@@ -79,16 +80,16 @@ def C002(filename,a,b):
         sl.append(line)
         count+=1
     x = ''.join(sl)
-    x= x[x.find('{')+1:x.rfind('}')].replace('\t','').strip()
-    return x
-
+    x = x[x.find('{')+1:x.rfind('}')].replace('\t','').strip()
+    y = CA02(x,pf,pb,False)
+    return x,y
     
 #check number of { and } in file and get coordinates
-def CA02(filename,pf,pb,MAIN=True):
+def CA02(filestring,pf,pb,MAIN=True):
     A_count=0
     B_count=0
     if MAIN == True:
-        with open(filename) as f:
+        with open(filestring) as f:
             fwd = [] #coordinates for forward parentheses
             bck =[] #coordinates for backward parentheses
             for line in enumerate(f):
@@ -102,29 +103,41 @@ def CA02(filename,pf,pb,MAIN=True):
         if A_count != B_count:
             exit('syntax error: number of bracket "{ or }" mismatch in file')
         else:
-            return fwd,bck
+            return fwd,bck,pf,pb
     else:
-        for i in string:
+        for i in filestring:
             if i==pf:
                 A_count+=1
             if i==pb:
                 B_count+=1
         return  A_count == B_count 
 
-def CA12(filename,fwd,bck):
+
+def CA12(filename,fwd,bck,pf,pb):
     oplist =[]
-    for a in enumerate(fwd):
-        for i in range(a[0],len(fwd)):
-            oplist.append(C002(filename,a[1],bck[i]))
-    print(oplist,'#1')
+    register_f =[]
+    register_b =[]
+    for i in fwd:
+        for j in bck:
+            if  (i in register_f) or (j in register_b):
+                pass
+            else:
+                op = C002(filename,i,j,pf,pb)
+                print(op)
+                if op[1]:
+                    register_f.append(i)
+                    register_b.append(j)
+                    oplist.append(op[0])
+    print(register_f, register_b)
+                    
                 #check of equal number of { and } between a and b
                 #pair the parentheses and get substrings between them
                 #print(pf,'and',pb,'equal','CA02')
     
         
 with open('test.c*') as f:
-    fwd,bck = CA02('test.c*','{','}')
-    CA12('test.c*',fwd,bck)
+    fwd,bck,pf,pb = CA02('test.c*','{','}')
+    CA12('test.c*',fwd,bck,pf,pb)
     SRC = f.readlines()
     LN = 0
     while LN != len(SRC):
