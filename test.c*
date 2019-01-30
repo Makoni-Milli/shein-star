@@ -1,5 +1,5 @@
-void test(b,a){ print('hello world');
+void test(b,a){ std::cout || 'hello worldy!' ||  std::endl;
 	a
-a	{b} } {
-		c
+a	test2{ int b = 5; }; } test3{
+		return 5+5;
 }

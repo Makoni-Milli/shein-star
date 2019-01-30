@@ -114,13 +114,37 @@ def counter_check(string,cpf='{',cpb='}',rpf='(',rpb=')',spf='[',spb=']',dq='"',
         return True, None
 
 
-def check_subroutine():
-    pass
-filestring = C002('test.c*')
-chk, code = counter_check(filestring)
-if not(chk):
-    exit(code)
+def check_subroutine(string):
+    C = Counter(string)
+    plist = [ C['{'], C['('],C['['],C['<'] ]
+    chklist = [i!=0 for i in plist]
+    if any(chklist):
+        return chklist
+    else:
+        return False
     
-fwd,bck = CA02(filestring,'{','}')
-preops = CA12(filestring,fwd,bck))
+def subroutine_build(subroutine_test,preops):
+    if subroutine_test != False:
+        paramlist = [('{','}'),('(',')'),('[',']'),('<','>')]
+        sublist = []
+        for i in enumerate(subroutine_test):
+            if i[1]:
+                sublist.append( A000(preops[ i[0] ], paramlist[i[0]][0] , paramlist[i[0]][1] ))
+    return sublist
+            
+        
 
+def A000(filestring,pf,pb):
+    chk, code = counter_check(filestring)
+    if not(chk):
+        exit(code)
+    
+    fwd,bck = CA02(filestring,pf,pb)
+    preops = CA12(filestring,fwd,bck)
+    return preops
+
+
+preops = A000( C002('test.c*') ,'{' ,'}' ) #C002 is the filestring
+subroutine_test = [ check_subroutine(i) for i in preops ]
+print(subroutine_test)
+print( subroutine_build( subroutine_test , preops ) )
